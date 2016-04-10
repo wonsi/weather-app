@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bootstrap List Group</title>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<style>
+  #weatherContainer {
+  margin-top: 50px;
+  background-color: #b3d9ff;
+}
+
+#getCity {
+  margin-top: 10px;
+  font-size: 2em;
+}
+
+#getTemp {
+  margin-top: -20px;
+  margin-bottom: 15px;
+  font-size: 3em;
+}
+
+#getWeather {
+  margin-top: 10px;
+  font-size: 3em;
+}
+
+#getWeather img {
+  posiotn: relative;
+  float: right;
+  margin-top: -20px;
+  width: 100px;
+}
+
+#btnToggleTemp {
+  margin-bottom: 10px;
+}
+	    </style>
+</head>
+<body>
+	
+
+<div class="container">
+  <div class="row">
+    <div id="weatherContainer" class="col-xs-4 col-xs-offset-4">
+    
+      
+        <section id="getCity" class="col-xs-6 col-xs-offset-3 text-center">
+          <h2>city</h2>
+        </section>
+      
+        <section id="getWeather" class="col-xs-8 col-xs-offset-2">
+        	<h3>weather</h3>
+        </section>
+  
+        <section id="getTemp" class="col-xs-4 col-xs-offset-4 text-center">
+        	<h3>temp</h3>
+        </section>
+      
+          <section id="btn-toggle" class="col-xs-4 col-xs-offset-4 text-center">
+            <button id="btnToggleTemp" class="btn btn-primary" value="F" name="btnToggleTemp">click</button>
+          </section>
+      </div><!--end btnToggleTemp row-->
+      
+  </div><!--end row-->
+</div><!--end container-->
+
+<script>
+	$(document).ready(function() {
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var lat = position.coords.latitude;
+      var lon = position.coords.longitude;
+      var api = 'http://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lon + '&appid=d5c140bc5ef8abd58dc7bab4fbd77671';
+
+      $.getJSON(api, function(data) {
+
+        var city = data.name;
+        var weather = data.weather[0].main;
+        var weatherIconUrl = '<img src=http://openweathermap.org/img/w/';
+        var icon = data.weather[0].icon;
+        var tempKelvin = data.main.temp
+        var tempFarenheit = Math.floor(((tempKelvin - 273.15) * 1.8) + 32);
+        var tempCelsius = Math.floor(tempKelvin - 273.15);
+
+        var f = '&#8457'; //decimal code for farenheit
+        var c = '&#8451'; //decimal code for celsius
+
+        $('#getCity').html(city);
+        $('#getWeather').html(weather + weatherIconUrl + icon + '.png>');
+
+        $('#getTemp').html(tempFarenheit + f);
+        $('#btnToggleTemp').html('F');
+
+        var tempType = 'F';
+        $('#btnToggleTemp').click(function() {
+          if (tempType === 'F') {
+            $("#getTemp").html(tempCelsius + c);
+            $('#btnToggleTemp').html('C');
+            tempType = 'C';
+          } else {
+            $("#getTemp").html(tempFarenheit + f);
+            $('#btnToggleTemp').html('F');
+            tempType = 'F';
+          }
+        }); //end btnToggleTemp click function
+
+        /* $('#getTemp').html('Farenheit: ' + tempFarenheit + '<br>Celsius: ' + tempCelsius);*/
+
+      }); //end $.getJSON function
+
+    }); //end navigator.geolocation function
+  } else {
+    console.log('Geolocation is not working');
+  }
+  /**/
+}); //end $(document).ready
+</script>
+</body>
+</html>
